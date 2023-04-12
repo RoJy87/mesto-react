@@ -1,0 +1,15 @@
+.header__logo {
+  display: block;
+  margin-left: 27px;
+  width: 104px;
+  height: 24px;
+  object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  .header__logo {
+    margin-left: 0;
+    width: 142px;
+    height: 33px;
+  }
+}
