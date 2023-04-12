@@ -1,6 +1,6 @@
 # Учебный проект: Место - на React
 
-[Ссылка на GHpages](https://rojy87.github.io/mesto/)
+[Ссылка на GHpages](https://rojy87.github.io/mesto-react/)
 
 Социальная сеть о путешествиях.
 
