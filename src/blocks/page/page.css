@@ -1,4 +1,4 @@
-.App {
+.page {
   max-width: 880px;
   min-height: 100vh;
   margin: 0 auto;
@@ -13,7 +13,7 @@
 }
 
 @media (min-width: 476px) {
-  .App {
+  .page {
     padding: 0 20px;
   }
 }
