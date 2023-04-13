@@ -17,6 +17,7 @@
 /* блок page */
 
 @import url("./blocks/page/page.css");
+@import url("./blocks/app/app.css");
 
 /* блок header */
 
