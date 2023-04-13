@@ -1,25 +1,25 @@
-function Card(props) {
+function Card({ card, onCardClick }) {
 
   return (
     <li className="places__items">
       <article className="place">
         <button
-          onClick={props.onCardClick}
+          onClick={onCardClick}
           type="button"
           className="place__img-btn button">
           <img
-            src={props.card.link}
-            alt={props.card.name}
+            src={card.link}
+            alt={card.name}
             className="place__photo" />
         </button>
         <div className="place__wrapper-name">
-          <h2 className="place__name">{props.card.name}</h2>
+          <h2 className="place__name">{card.name}</h2>
           <div className="place__like-wrapper">
             <button
               aria-label="Отметить мне нравиться"
               type="button"
               className="place__like-btn button"></button>
-            <span className="place__like-count">{props.card.likes.length}</span>
+            <span className="place__like-count">{card.likes.length}</span>
           </div>
         </div>
       </article>

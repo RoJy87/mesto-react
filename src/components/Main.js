@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { api } from './utils/Api';
 import Card from './Card';
 
-function Main(props) {
+function Main({ onLoadingSpinner, ...props }) {
 
-  const [profileInfo, setProfileInfo] = React.useState({})
-  const [cards, setCards] = React.useState([])
+  const [profileInfo, setProfileInfo] = useState({})
+  const [cards, setCards] = useState([])
 
-  React.useEffect(() => {
-    props.onLoadingSpinner(true)
+  useEffect(() => {
+    onLoadingSpinner(true)
     Promise.all([api.pullUserInfo(), api.getItems()])
       .then(([userData, cardData]) => {
         setProfileInfo({
@@ -20,7 +20,7 @@ function Main(props) {
         setCards(cardData)
       })
       .catch((err) => console.log(err))
-      .finally(() => { props.onLoadingSpinner(false) })
+      .finally(() => { onLoadingSpinner(false) })
   }, [])
 
   return (
@@ -57,9 +57,9 @@ function Main(props) {
 
       <section aria-label="Интересные места для посещения">
         <ul className="places">
-          {cards.map((card, i) => {
+          {cards.map((card) => {
             return (
-              <Card card={card} key={i} onCardClick={() => props.onCardClick(card)} />
+              <Card card={card} key={card._id} onCardClick={() => props.onCardClick(card)} />
             )
           })}
         </ul>
