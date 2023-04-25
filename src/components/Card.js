@@ -1,4 +1,26 @@
-function Card({ card, onCardClick }) {
+import React from "react";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+
+function Card({ card, onCardClick, onCardLike, onCardDelete }) {
+  const currentUser = React.useContext(CurrentUserContext);
+
+  const isOwn = card.owner._id === currentUser.id;
+  const isLiked = card.likes.some((i) => i._id === currentUser.id);
+  const cardLikeButtonClassName = `place__like-btn button ${
+    isLiked && "place__like-btn_active"
+  }`;
+
+  /*   function handleClick(card) {
+    return onCardClick(card);
+  }
+
+  function handleDeleteClick(card) {
+    return onCardDelete(card);
+  }
+
+  function handleLikeClick(card) {
+    return onCardLike(card);
+  } */
 
   return (
     <li className="places__items">
@@ -6,11 +28,9 @@ function Card({ card, onCardClick }) {
         <button
           onClick={onCardClick}
           type="button"
-          className="place__img-btn button">
-          <img
-            src={card.link}
-            alt={card.name}
-            className="place__photo" />
+          className="place__img-btn button"
+        >
+          <img src={card.link} alt={card.name} className="place__photo" />
         </button>
         <div className="place__wrapper-name">
           <h2 className="place__name">{card.name}</h2>
@@ -18,18 +38,23 @@ function Card({ card, onCardClick }) {
             <button
               aria-label="Отметить мне нравиться"
               type="button"
-              className="place__like-btn button"></button>
+              className={cardLikeButtonClassName}
+              onClick={onCardLike}
+            ></button>
             <span className="place__like-count">{card.likes.length}</span>
           </div>
         </div>
       </article>
-      <button
-        aria-label="Удалить карточку"
-        type="button"
-        className="place__delete-btn button">
-      </button>
+      {isOwn && (
+        <button
+          aria-label="Удалить карточку"
+          type="button"
+          className="place__delete-btn button"
+          onClick={onCardDelete}
+        ></button>
+      )}
     </li>
-  )
+  );
 }
 
 export default Card;
