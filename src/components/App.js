@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
-import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 import Spinner from "./Spinner";
 import { api } from "./utils/Api";
@@ -10,15 +9,19 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
+import DeletePlacePopup from "./DeletePlacePopup.js";
 
 function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false);
+  const [isDeletePlacePopupOpen, setDeletePlacePopupOpen] = useState(false);
   const [isSpinnerPopupOpen, setSpinnerPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
+  const [deletedCard, setDeletedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
+  const [isLoadingButton, setLoadingButton] = useState(false);
 
   useEffect(() => {
     loadingSpinner(true);
@@ -38,6 +41,10 @@ function App() {
       });
   }, []);
 
+  function loadingSpinner(isLoading) {
+    setSpinnerPopupOpen(isLoading);
+  }
+
   function handleEditProfileClick() {
     setEditProfilePopupOpen(!isEditProfilePopupOpen);
   }
@@ -54,56 +61,90 @@ function App() {
     setSelectedCard(card);
   }
 
-  function handleCardLike(card) {
-    const isLiked = card.likes.some((i) => i._id === currentUser.id);
-    api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
-      setCards((cards) =>
-        cards.map((c) => (c._id === newCard._id ? newCard : c))
-      );
-    });
-  }
-
-  function handleCardDelete(card) {
-    api.deleteCard(card._id).then(() => {
-      setCards((cards) => {
-        return cards.filter((c) => {
-          const newCard = c._id !== card._id;
-          return newCard;
-        });
-      });
-    });
-  }
-
-  function loadingSpinner(isLoading) {
-    setSpinnerPopupOpen(isLoading);
-  }
-
   function closeAllPopups() {
     setEditProfilePopupOpen(false);
     setAddPlacePopupOpen(false);
     setEditAvatarPopupOpen(false);
+    setDeletePlacePopupOpen(false);
     setSelectedCard(null);
   }
 
   function handleUpdateUser(user) {
-    api.setUserInfo(user).then((user) => {
-      setCurrentUser(user);
-      closeAllPopups();
-    });
+    setLoadingButton(true);
+    api
+      .setUserInfo(user)
+      .then((user) => {
+        setCurrentUser(user);
+      })
+      .then(() => closeAllPopups())
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setLoadingButton(false);
+      });
   }
 
   function handleUpdateAvatar(user) {
-    api.setUserAvatar(user).then((user) => {
-      setCurrentUser(user);
-      closeAllPopups();
-    });
+    setLoadingButton(true);
+    api
+      .setUserAvatar(user)
+      .then((user) => {
+        setCurrentUser(user);
+      })
+      .then(() => closeAllPopups())
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setLoadingButton(false);
+      });
   }
 
   function handleAddPlaceSubmit(card) {
-    api.setItems(card).then((card) => {
-      setCards([card, ...cards]);
-      closeAllPopups();
-    });
+    setLoadingButton(true);
+    api
+      .setItems(card)
+      .then((card) => {
+        setCards([card, ...cards]);
+      })
+      .then(() => closeAllPopups())
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setLoadingButton(false);
+      });
+  }
+
+  function handleCardLike(card) {
+    const isLiked = card.likes.some((i) => i._id === currentUser.id);
+    api
+      .changeLikeCardStatus(card._id, isLiked)
+      .then((newCard) => {
+        setCards((cards) =>
+          cards.map((c) => (c._id === newCard._id ? newCard : c))
+        );
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function handleCardDelete(card) {
+    setDeletePlacePopupOpen(true);
+    setDeletedCard(card);
+  }
+
+  function handleCardDeleteSubmit(card) {
+    setLoadingButton(true);
+    api
+      .deleteCard(card._id)
+      .then(() => {
+        setCards((cards) => {
+          return cards.filter((c) => {
+            const newCard = c._id !== card._id;
+            return newCard;
+          });
+        });
+      })
+      .then(() => closeAllPopups())
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setLoadingButton(false);
+      });
   }
 
   return (
@@ -126,19 +167,28 @@ function App() {
             isOpen={isEditProfilePopupOpen}
             onClose={closeAllPopups}
             onUpdateUser={handleUpdateUser}
+            isLoadingButton={isLoadingButton}
           />
           <AddPlacePopup
             isOpen={isAddPlacePopupOpen}
             onClose={closeAllPopups}
             onAddPlace={handleAddPlaceSubmit}
+            isLoadingButton={isLoadingButton}
           />
 
           <EditAvatarPopup
             isOpen={isEditAvatarPopupOpen}
             onClose={closeAllPopups}
             onUpdateAvatar={handleUpdateAvatar}
+            isLoadingButton={isLoadingButton}
           />
-          <PopupWithForm name="delete-place" title="Вы уверены?" btnName="Да" />
+          <DeletePlacePopup
+            card={deletedCard}
+            isOpen={isDeletePlacePopupOpen}
+            onClose={closeAllPopups}
+            onDeletePlace={handleCardDeleteSubmit}
+            isLoadingButton={isLoadingButton}
+          />
           <ImagePopup
             name="image"
             card={selectedCard}

@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import Card from "./Card";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import avatar__image from "../image/avatar__image.jpg";
 
 function Main({ onLoadingSpinner, ...props }) {
   const currentUser = useContext(CurrentUserContext);
@@ -15,15 +16,19 @@ function Main({ onLoadingSpinner, ...props }) {
           type="button"
         >
           <img
-            src={currentUser.avatar}
+            src={currentUser.avatar ?? avatar__image}
             alt="Аватар пользователя"
             className="profile__avatar"
           />
         </button>
         <div className="profile__info">
           <div className="profile__wrapper">
-            <h1 className="profile__name">{currentUser.name}</h1>
-            <p className="profile__description">{currentUser.about}</p>
+            <h1 className="profile__name">
+              {currentUser.name ?? "Жак-Ив-Кусто"}
+            </h1>
+            <p className="profile__description">
+              {currentUser.about ?? "Исследователь океана"}
+            </p>
           </div>
           <button
             onClick={props.onEditProfile}

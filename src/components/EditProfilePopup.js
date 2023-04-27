@@ -2,45 +2,42 @@ import React, { useState, useEffect, useContext } from "react";
 import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
+function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoadingButton }) {
   const currentUser = useContext(CurrentUserContext);
-
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [user, setUser] = useState(currentUser);
+  const [buttonName, setButtonName] = useState("");
 
   useEffect(() => {
-    setName(currentUser.name);
-    setDescription(currentUser.about);
-  }, [currentUser]);
+    isLoadingButton
+      ? setButtonName("Сохранение...")
+      : setButtonName("Сохранить");
+  }, [isLoadingButton]);
 
-  function handleChangeName(e) {
-    setName(e.target.value);
-  }
+  useEffect(() => {
+    setUser(currentUser);
+  }, [currentUser, onClose]);
 
-  function handleChangeDescription(e) {
-    setDescription(e.target.value);
+  function handleChange(e) {
+    setUser((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    onUpdateUser({
-      name: name,
-      about: description,
-    });
+    onUpdateUser(user);
   }
 
   return (
     <PopupWithForm
       name="edit-profile"
       title="Редактировать профиль"
-      btnName="Сохранить"
+      btnName={buttonName}
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
     >
       <label className="popup__form-field">
         <input
-          id="name-input"
+          id="name"
           className="popup__input popup__input_value_name"
           type="text"
           name="name"
@@ -48,23 +45,23 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
           required
           minLength="2"
           maxLength="40"
-          value={name}
-          onChange={handleChangeName}
+          value={user.name || ""}
+          onChange={handleChange}
         />
         <span className="name-input-error popup__error"></span>
       </label>
       <label className="popup__form-field">
         <input
-          id="status-input"
+          id="about"
           className="popup__input popup__input_value_status"
           type="text"
-          name="description"
+          name="about"
           placeholder="О себе"
           required
           minLength="2"
           maxLength="200"
-          value={description}
-          onChange={handleChangeDescription}
+          value={user.about || ""}
+          onChange={handleChange}
         />
         <span className="status-input-error popup__error"></span>
       </label>

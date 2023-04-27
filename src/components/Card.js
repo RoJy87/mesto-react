@@ -10,18 +10,6 @@ function Card({ card, onCardClick, onCardLike, onCardDelete }) {
     isLiked && "place__like-btn_active"
   }`;
 
-  /*   function handleClick(card) {
-    return onCardClick(card);
-  }
-
-  function handleDeleteClick(card) {
-    return onCardDelete(card);
-  }
-
-  function handleLikeClick(card) {
-    return onCardLike(card);
-  } */
-
   return (
     <li className="places__items">
       <article className="place">

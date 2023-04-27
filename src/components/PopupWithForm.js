@@ -1,9 +1,14 @@
+import ClosePopupOnEscape from "../hooks/ClosePopupOnEscape";
+
 function PopupWithForm(props) {
   return (
     <div
       className={`popup popup_type_${props.name} ${
         props.isOpen && "popup_opened"
       }`}
+      onMouseDown={(evt) =>
+        evt.target.classList.contains("popup") && props.onClose()
+      }
     >
       <div className="popup__container">
         <button
@@ -31,6 +36,7 @@ function PopupWithForm(props) {
           </button>
         </form>
       </div>
+      {props.isOpen && <ClosePopupOnEscape action={props.onClose} />}
     </div>
   );
 }
