@@ -24,6 +24,7 @@ function DeletePlacePopup({
       name="delete-place"
       title="Вы уверены?"
       btnName={buttonName}
+      isValid={true}
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
