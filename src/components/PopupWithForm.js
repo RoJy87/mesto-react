@@ -1,4 +1,4 @@
-import ClosePopupOnEscape from "../hooks/ClosePopupOnEscape";
+import ClosePopupOnEscape from "./ClosePopupOnEscape";
 
 function PopupWithForm(props) {
   return (
@@ -28,9 +28,12 @@ function PopupWithForm(props) {
         >
           {props.children}
           <button
+            disabled={!props.isValid}
             type="submit"
             form={`form-${props.name}`}
-            className={`popup__save-btn button form-${props.name}-btn`}
+            className={`popup__save-btn button form-${props.name}-btn ${
+              !props.isValid && "popup__save-btn_disabled"
+            }`}
           >
             {props.btnName}
           </button>

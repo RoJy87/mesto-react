@@ -17,11 +17,12 @@ function App() {
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false);
   const [isDeletePlacePopupOpen, setDeletePlacePopupOpen] = useState(false);
   const [isSpinnerPopupOpen, setSpinnerPopupOpen] = useState(false);
+  const [isLoadingButton, setLoadingButton] = useState(false);
+
+  const [cards, setCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [deletedCard, setDeletedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
-  const [cards, setCards] = useState([]);
-  const [isLoadingButton, setLoadingButton] = useState(false);
 
   useEffect(() => {
     loadingSpinner(true);

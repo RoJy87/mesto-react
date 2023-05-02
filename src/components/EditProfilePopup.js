@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import { useFormAndValidation } from "../hooks/useFormAndValidation";
 
 function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoadingButton }) {
   const currentUser = useContext(CurrentUserContext);
-  const [user, setUser] = useState(currentUser);
   const [buttonName, setButtonName] = useState("");
+  const { values, handleChange, errors, isValid, resetForm } =
+    useFormAndValidation();
 
   useEffect(() => {
     isLoadingButton
@@ -14,16 +16,12 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoadingButton }) {
   }, [isLoadingButton]);
 
   useEffect(() => {
-    setUser(currentUser);
-  }, [currentUser, onClose]);
-
-  function handleChange(e) {
-    setUser((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
-  }
+    resetForm(currentUser, {}, true);
+  }, [currentUser, isOpen, resetForm]);
 
   function handleSubmit(e) {
     e.preventDefault();
-    onUpdateUser(user);
+    onUpdateUser(values);
   }
 
   return (
@@ -31,6 +29,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoadingButton }) {
       name="edit-profile"
       title="Редактировать профиль"
       btnName={buttonName}
+      isValid={isValid}
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
@@ -45,25 +44,37 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoadingButton }) {
           required
           minLength="2"
           maxLength="40"
-          value={user.name || ""}
+          value={values.name || ""}
           onChange={handleChange}
         />
-        <span className="name-input-error popup__error"></span>
+        <span
+          className={`name-input-error popup__error ${
+            !isValid && "popup__error_visible"
+          }`}
+        >
+          {errors.name}
+        </span>
       </label>
       <label className="popup__form-field">
         <input
           id="about"
-          className="popup__input popup__input_value_status"
+          className="popup__input popup__input_value_about"
           type="text"
           name="about"
           placeholder="О себе"
           required
           minLength="2"
           maxLength="200"
-          value={user.about || ""}
+          value={values.about || ""}
           onChange={handleChange}
         />
-        <span className="status-input-error popup__error"></span>
+        <span
+          className={`name-input-error popup__error ${
+            !isValid && "popup__error_visible"
+          }`}
+        >
+          {errors.about}
+        </span>
       </label>
     </PopupWithForm>
   );

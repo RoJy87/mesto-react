@@ -1,4 +1,4 @@
-import ClosePopupOnEscape from "../hooks/ClosePopupOnEscape";
+import ClosePopupOnEscape from "./ClosePopupOnEscape";
 
 function ImagePopup({ name, card, onClose }) {
   return (
@@ -6,6 +6,7 @@ function ImagePopup({ name, card, onClose }) {
       className={`popup popup_type_${name} ${card && "popup_opened"}`}
       onMouseDown={(evt) => evt.target.classList.contains("popup") && onClose()}
     >
+      {card && <ClosePopupOnEscape action={onClose} />}
       <div className="popup__container popup__container_style_reset">
         <button
           aria-label="Закрыть"
@@ -18,7 +19,6 @@ function ImagePopup({ name, card, onClose }) {
           <figcaption className="popup__caption">{card?.name}</figcaption>
         </figure>
       </div>
-      {card && <ClosePopupOnEscape action={onClose} />}
     </div>
   );
 }
